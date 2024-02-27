@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'com.github.bjornvester.wsdl2java' version '2.0.2'
+}
+
+group = 'cc.silentio'
+version = '1.0-SNAPSHOT'
+
+wsdl2java {
+    cxfVersion = '4.0.3'
+    verbose = true
+    wsdlDir = file('src/main/resources/wsdl')
+    packageName = 'cc.silentio.bookservice.generated'
+    generatedSourceDir.set(layout.projectDirectory.dir("src/main/java"))
+    options = ['-xjc-XReplacePrimitives',
+               '-xjc-Xts:style:org.apache.commons.lang3.builder.ToStringStyle.DEFAULT_STYLE',
+               '-xjc-XJsr303Annotations',
+               '-xjc-XJsr303Annotations:validationAnnotations=jakarta']
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.cxf:cxf-rt-frontend-jaxws:4.0.3'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+
+
+    // code generation
+    implementation 'com.fillumina:krasa-jaxb-tools:2.3-SNAPSHOT'
+    xjcPlugins 'com.fillumina:krasa-jaxb-tools:2.3-SNAPSHOT'
+    implementation 'org.apache.cxf.xjcplugins:cxf-xjc-ts:4.0.0'
+    xjcPlugins 'org.apache.cxf.xjcplugins:cxf-xjc-ts:4.0.0'
+
+    // testing
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    // Unable to initialize 'jakarta.el.ExpressionFactory'. Check that you have the EL dependencies on the classpath
+    testImplementation 'org.glassfish:jakarta.el:5.0.0-M1'
+}
+
+test {
+    useJUnitPlatform()
+}
